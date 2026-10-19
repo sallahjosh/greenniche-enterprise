@@ -2,42 +2,42 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Marquee scroll animation */
-@keyframes marquee {
-  from { transform: translateX(0); }
-  to   { transform: translateX(-50%); }
-}
+/* ── Animations ── */
+@keyframes marquee        { from { transform:translateX(0) } to { transform:translateX(-50%) } }
+@keyframes fade-up        { from { opacity:0; transform:translateY(20px) } to { opacity:1; transform:translateY(0) } }
+@keyframes fade-in        { from { opacity:0 } to { opacity:1 } }
+@keyframes scale-in       { from { opacity:0; transform:scale(0.96) } to { opacity:1; transform:scale(1) } }
 
 @layer base {
   :root { color-scheme: light; }
+  html  { scroll-behavior: smooth; }
 
-  html { scroll-behavior: smooth; }
-
-  /* Use raw CSS values here — @apply can't resolve custom colors in @layer base */
   body {
-    background-color: #FDFBF7;
-    color: #1A1A1A;
-    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #FAFAF7;
+    color: #161613;
+    font-family: 'DM Sans', Inter, system-ui, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    font-size: 16px;
+    line-height: 1.6;
   }
 
-  h1, h2, h3 {
+  h1, h2, h3, h4 {
     font-family: 'Playfair Display', Georgia, serif;
-    letter-spacing: -0.04em;
-    color: #1A1A1A;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
   }
 
-  /* Accessible focus rings */
+  p { line-height: 1.7; }
+
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    @apply outline-none ring-2 ring-brand-500 ring-offset-2 rounded;
+    @apply outline-none ring-2 ring-brand-400 ring-offset-2 ring-offset-canvas rounded;
   }
 
-  /* Reduced-motion */
   @media (prefers-reduced-motion: reduce) {
     *, *::before, *::after {
       animation-duration: 0.001ms !important;
@@ -48,31 +48,69 @@
 }
 
 @layer components {
-  .container-page {
-    @apply mx-auto w-full max-w-container px-5 sm:px-8 lg:px-10;
-  }
+
+  /* ── Layout ── */
+  .wrap { @apply mx-auto w-full max-w-container px-5 sm:px-8 xl:px-10; }
 
   /* ── Buttons ── */
-  .btn            { @apply inline-flex items-center justify-center gap-2 font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed; }
-  .btn-primary    { @apply btn rounded-full bg-brand-500 text-white hover:bg-brand-600 shadow-soft hover:shadow-card px-7 py-3.5 text-sm; }
-  .btn-secondary  { @apply btn rounded-full bg-[#F5F0E8] text-brand-800 hover:bg-[#EDE4D0] px-7 py-3.5 text-sm; }
-  .btn-outline    { @apply btn rounded-full border-2 border-brand-500 text-brand-700 hover:bg-brand-50 px-7 py-3.5 text-sm; }
-  .btn-ghost      { @apply btn text-brand-700 hover:bg-brand-50 rounded-full px-4 py-2 text-sm; }
+  .btn   { @apply inline-flex items-center justify-center gap-2 font-semibold leading-none transition-all duration-200 disabled:opacity-40 disabled:pointer-events-none select-none; }
+
+  .btn-primary {
+    @apply btn rounded-full bg-brand-500 text-white px-7 py-3.5 text-sm
+           hover:bg-brand-600 shadow-brand hover:shadow-lg hover:-translate-y-px active:translate-y-0;
+  }
+  .btn-dark {
+    @apply btn rounded-full bg-ink text-white px-7 py-3.5 text-sm
+           hover:bg-ink-light shadow-md hover:shadow-lg hover:-translate-y-px active:translate-y-0;
+  }
+  .btn-outline {
+    @apply btn rounded-full border-2 border-ink/20 text-ink px-7 py-3.5 text-sm
+           hover:border-brand-500 hover:text-brand-600 hover:bg-brand-50;
+  }
+  .btn-outline-white {
+    @apply btn rounded-full border-2 border-white/30 text-white px-7 py-3.5 text-sm
+           hover:bg-white/10 hover:border-white/60;
+  }
+  .btn-ghost {
+    @apply btn text-ink/70 hover:text-brand-600 hover:bg-sage rounded-lg px-4 py-2 text-sm;
+  }
+
+  /* ── Section label (pill tag above headings) ── */
+  .tag {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-1.5
+           text-2xs font-semibold uppercase tracking-[0.12em]
+           border border-brand-200 bg-brand-50 text-brand-700;
+  }
+  .tag-dark {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-1.5
+           text-2xs font-semibold uppercase tracking-[0.12em]
+           border border-white/15 bg-white/10 text-white/80;
+  }
+  .tag-stone {
+    @apply inline-flex items-center gap-2 rounded-full px-4 py-1.5
+           text-2xs font-semibold uppercase tracking-[0.12em]
+           border border-stone-300 bg-stone-100 text-stone-600;
+  }
 
   /* ── Cards ── */
-  .card    { @apply rounded-3xl border border-[#EDE4D0] bg-white shadow-soft; }
-  .card-sm { @apply rounded-2xl border border-[#EDE4D0] bg-white shadow-soft; }
+  .card { @apply rounded-3xl bg-white border border-stone-200 shadow-sm; }
 
   /* ── Form inputs ── */
-  .input {
-    @apply w-full rounded-xl border border-[#EDE4D0] bg-white px-4 py-3 text-sm
-           placeholder:text-[#1A1A1A]/30 focus:border-brand-400 focus:ring-2
-           focus:ring-brand-100 outline-none transition;
+  .field {
+    @apply w-full rounded-xl border border-stone-200 bg-white px-4 py-3.5 text-sm text-ink
+           placeholder:text-ink-muted focus:border-brand-400 focus:ring-2 focus:ring-brand-100 outline-none
+           transition-all duration-150;
+  }
+  .label { @apply block mb-1.5 text-sm font-semibold text-ink/80; }
+
+  /* ── Section headings ── */
+  .section-heading {
+    @apply font-display font-black tracking-tightest text-ink;
   }
 
-  /* ── Section label pill ── */
-  .section-label {
-    @apply inline-flex items-center gap-2 rounded-full border border-brand-200
-           bg-brand-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-brand-700;
-  }
+  /* ── Divider ── */
+  .divider { @apply w-12 h-0.5 bg-brand-400 rounded-full; }
+
+  /* ── Prose text ── */
+  .prose-body { @apply text-base leading-relaxed text-ink-light; }
 }

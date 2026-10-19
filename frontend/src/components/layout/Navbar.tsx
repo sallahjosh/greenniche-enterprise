@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react'
-import { Link, NavLink, useNavigate } from 'react-router-dom'
+import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { Menu, X, ShoppingBag, Leaf } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
-const navLinks = [
+const primary = [
   { to: '/',         label: 'Home',     end: true  },
   { to: '/about',    label: 'About',    end: false },
   { to: '/products', label: 'Products', end: false },
@@ -13,76 +13,87 @@ const navLinks = [
 export function Navbar() {
   const [open, setOpen]         = useState(false)
   const [scrolled, setScrolled] = useState(false)
-  const navigate = useNavigate()
+  const navigate  = useNavigate()
+  const location  = useLocation()
+  const isHome    = location.pathname === '/'
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 24)
-    window.addEventListener('scroll', handler, { passive: true })
-    return () => window.removeEventListener('scroll', handler)
+    const h = () => setScrolled(window.scrollY > 40)
+    window.addEventListener('scroll', h, { passive: true })
+    return () => window.removeEventListener('scroll', h)
   }, [])
 
-  const linkClass = ({ isActive }: { isActive: boolean }) =>
-    cn(
-      'relative px-1 py-0.5 text-sm font-medium transition-colors',
-      'after:absolute after:bottom-0 after:left-0 after:h-px after:w-full',
-      'after:origin-left after:scale-x-0 after:bg-brand-500 after:transition-transform',
-      'hover:text-brand-700 hover:after:scale-x-100',
-      isActive ? 'text-brand-700 after:scale-x-100' : 'text-[#1A1A1A]/60'
-    )
+  useEffect(() => { setOpen(false) }, [location.pathname])
+
+  /* On the home page the nav starts transparent over the dark hero,
+     then becomes opaque after scroll. On all other pages always opaque. */
+  const transparent = isHome && !scrolled && !open
 
   return (
     <header
       className={cn(
-        'sticky top-0 z-40 transition-all duration-300',
-        scrolled
-          ? 'bg-white/95 backdrop-blur shadow-soft border-b border-[#EDE4D0]'
-          : 'bg-[#FDFBF7]/80 backdrop-blur border-b border-[#EDE4D0]/60'
+        'sticky top-0 z-50 transition-all duration-300',
+        transparent
+          ? 'bg-transparent'
+          : 'bg-white/97 backdrop-blur-md border-b border-stone-200 shadow-xs'
       )}
     >
-      <nav
-        className="container-page flex h-[68px] items-center justify-between gap-6"
-        aria-label="Main navigation"
-      >
-        {/* ── Logo ── */}
-        <Link
-          to="/"
-          className="flex items-center gap-2.5 font-display text-xl font-bold text-[#1A1A1A] tracking-tight"
-        >
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white shadow-soft">
-            <Leaf className="h-4 w-4" />
+      <nav className="wrap flex h-[70px] items-center justify-between gap-6" aria-label="Main navigation">
+
+        {/* ── Brand ── */}
+        <Link to="/" className="flex items-center gap-2.5 shrink-0">
+          <span className={cn(
+            'flex h-8 w-8 items-center justify-center rounded-lg shadow-sm transition-colors',
+            transparent ? 'bg-white/15 border border-white/20' : 'bg-brand-500'
+          )}>
+            <Leaf className="h-4 w-4 text-white" />
           </span>
-          <span>
-            Green<span className="text-brand-600">Niche</span>
+          <span className={cn(
+            'font-display text-lg font-bold tracking-tight transition-colors',
+            transparent ? 'text-white' : 'text-ink'
+          )}>
+            Green<span className={transparent ? 'text-brand-300' : 'text-brand-500'}>Niche</span>
           </span>
         </Link>
 
         {/* ── Desktop links ── */}
-        <div className="hidden items-center gap-7 md:flex">
-          {navLinks.map((l) => (
-            <NavLink key={l.to} to={l.to} className={linkClass} end={l.end}>
+        <div className="hidden items-center gap-1 lg:flex">
+          {primary.map((l) => (
+            <NavLink
+              key={l.to}
+              to={l.to}
+              end={l.end}
+              className={({ isActive }) => cn(
+                'rounded-lg px-3.5 py-2 text-sm font-medium transition-colors',
+                isActive
+                  ? transparent ? 'text-white bg-white/10' : 'text-brand-600 bg-brand-50'
+                  : transparent ? 'text-white/80 hover:text-white hover:bg-white/10' : 'text-ink/70 hover:text-ink hover:bg-stone-100'
+              )}
+            >
               {l.label}
             </NavLink>
           ))}
         </div>
 
         {/* ── Desktop actions ── */}
-        <div className="hidden items-center gap-3 md:flex">
-          <NavLink
-            to="/account"
-            className="text-sm font-medium text-[#1A1A1A]/60 hover:text-brand-700 transition-colors"
-          >
+        <div className="hidden items-center gap-2.5 lg:flex">
+          <NavLink to="/account" className={cn(
+            'text-sm font-medium transition-colors px-2',
+            transparent ? 'text-white/80 hover:text-white' : 'text-ink/60 hover:text-ink'
+          )}>
             Login
           </NavLink>
-          <NavLink
-            to="/cart"
-            aria-label="Cart"
-            className="relative flex h-9 w-9 items-center justify-center rounded-full border border-[#EDE4D0] bg-white text-[#1A1A1A]/60 hover:text-brand-700 hover:border-brand-200 shadow-soft transition-all"
-          >
+          <NavLink to="/cart" aria-label="Cart" className={cn(
+            'flex h-9 w-9 items-center justify-center rounded-full border transition-all',
+            transparent
+              ? 'border-white/25 text-white/80 hover:bg-white/10 hover:text-white'
+              : 'border-stone-200 text-ink/60 hover:border-brand-300 hover:text-brand-600 bg-white shadow-xs'
+          )}>
             <ShoppingBag className="h-4 w-4" />
           </NavLink>
           <button
             onClick={() => navigate('/products')}
-            className="btn-primary text-xs px-5 py-2.5 shadow-soft"
+            className="btn-primary text-xs px-5 py-2.5"
           >
             Order Now
           </button>
@@ -90,10 +101,15 @@ export function Navbar() {
 
         {/* ── Mobile toggle ── */}
         <button
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#EDE4D0] bg-white text-[#1A1A1A]/60 hover:text-brand-700 transition-colors md:hidden"
-          onClick={() => setOpen((v) => !v)}
+          onClick={() => setOpen(v => !v)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
+          className={cn(
+            'flex h-9 w-9 items-center justify-center rounded-full border transition-all lg:hidden',
+            transparent
+              ? 'border-white/25 text-white/80 hover:bg-white/10'
+              : 'border-stone-200 text-ink/60 bg-white shadow-xs'
+          )}
         >
           {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </button>
@@ -101,41 +117,32 @@ export function Navbar() {
 
       {/* ── Mobile drawer ── */}
       {open && (
-        <div className="border-t border-[#EDE4D0] bg-white md:hidden">
-          <div className="container-page flex flex-col gap-1 py-5">
-            {navLinks.map((l) => (
+        <div className="border-t border-stone-200 bg-white lg:hidden">
+          <div className="wrap py-5 flex flex-col gap-1">
+            {primary.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
                 end={l.end}
-                onClick={() => setOpen(false)}
-                className={({ isActive }) =>
-                  cn(
-                    'rounded-xl px-4 py-3 text-sm font-medium transition-colors',
-                    isActive
-                      ? 'bg-brand-50 text-brand-700'
-                      : 'text-[#1A1A1A]/70 hover:bg-[#F5F0E8] hover:text-brand-700'
-                  )
-                }
+                className={({ isActive }) => cn(
+                  'rounded-xl px-4 py-3 text-sm font-medium transition-colors',
+                  isActive ? 'bg-brand-50 text-brand-700' : 'text-ink/70 hover:bg-stone-100 hover:text-ink'
+                )}
               >
                 {l.label}
               </NavLink>
             ))}
-            <div className="mt-3 flex gap-2 border-t border-[#EDE4D0] pt-4">
-              <NavLink
-                to="/account"
-                onClick={() => setOpen(false)}
-                className="flex-1 rounded-full border border-brand-500 py-2.5 text-center text-sm font-semibold text-brand-700 hover:bg-brand-50 transition-colors"
-              >
+            <div className="mt-3 pt-3 border-t border-stone-100 flex gap-2.5">
+              <NavLink to="/account" className="flex-1 rounded-full border border-stone-200 py-2.5 text-center text-sm font-semibold text-ink/70 hover:bg-stone-50">
                 Login
               </NavLink>
-              <button
-                onClick={() => { setOpen(false); navigate('/products') }}
-                className="flex-1 btn-primary text-xs py-2.5"
-              >
-                Order Now
-              </button>
+              <NavLink to="/cart" className="flex-1 rounded-full border border-stone-200 py-2.5 text-center text-sm font-semibold text-ink/70 hover:bg-stone-50">
+                Cart
+              </NavLink>
             </div>
+            <button onClick={() => navigate('/products')} className="btn-primary mt-2 w-full justify-center">
+              Order Now
+            </button>
           </div>
         </div>
       )}
