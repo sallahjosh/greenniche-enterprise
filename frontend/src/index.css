@@ -2,66 +2,77 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Marquee scroll animation */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+
 @layer base {
-  :root {
-    color-scheme: light;
-  }
+  :root { color-scheme: light; }
 
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
 
+  /* Use raw CSS values here — @apply can't resolve custom colors in @layer base */
   body {
-    @apply bg-white text-brand-900 font-sans antialiased;
+    background-color: #FDFBF7;
+    color: #1A1A1A;
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
-  h1, h2, h3, h4 {
-    @apply font-display tracking-tight text-brand-900;
+  h1, h2, h3 {
+    font-family: 'Playfair Display', Georgia, serif;
+    letter-spacing: -0.04em;
+    color: #1A1A1A;
   }
 
-  /* Visible focus states for accessibility */
+  /* Accessible focus rings */
   a:focus-visible,
   button:focus-visible,
   input:focus-visible,
   textarea:focus-visible,
   select:focus-visible {
-    @apply outline-none ring-2 ring-brand-500 ring-offset-2 ring-offset-white rounded;
+    @apply outline-none ring-2 ring-brand-500 ring-offset-2 rounded;
+  }
+
+  /* Reduced-motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.001ms !important;
+      transition-duration: 0.001ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
 @layer components {
   .container-page {
-    @apply mx-auto w-full max-w-container px-4 sm:px-6 lg:px-8;
+    @apply mx-auto w-full max-w-container px-5 sm:px-8 lg:px-10;
   }
 
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-  .btn-primary {
-    @apply btn bg-brand-500 text-white hover:bg-brand-600 px-5 py-2.5;
-  }
-  .btn-secondary {
-    @apply btn bg-brand-50 text-brand-700 hover:bg-brand-100 px-5 py-2.5;
-  }
-  .btn-outline {
-    @apply btn border border-brand-500 text-brand-700 hover:bg-brand-50 px-5 py-2.5;
-  }
-  .card {
-    @apply rounded-xl border border-brand-100 bg-white shadow-soft;
-  }
+  /* ── Buttons ── */
+  .btn            { @apply inline-flex items-center justify-center gap-2 font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed; }
+  .btn-primary    { @apply btn rounded-full bg-brand-500 text-white hover:bg-brand-600 shadow-soft hover:shadow-card px-7 py-3.5 text-sm; }
+  .btn-secondary  { @apply btn rounded-full bg-[#F5F0E8] text-brand-800 hover:bg-[#EDE4D0] px-7 py-3.5 text-sm; }
+  .btn-outline    { @apply btn rounded-full border-2 border-brand-500 text-brand-700 hover:bg-brand-50 px-7 py-3.5 text-sm; }
+  .btn-ghost      { @apply btn text-brand-700 hover:bg-brand-50 rounded-full px-4 py-2 text-sm; }
+
+  /* ── Cards ── */
+  .card    { @apply rounded-3xl border border-[#EDE4D0] bg-white shadow-soft; }
+  .card-sm { @apply rounded-2xl border border-[#EDE4D0] bg-white shadow-soft; }
+
+  /* ── Form inputs ── */
   .input {
-    @apply w-full rounded-lg border border-brand-100 bg-white px-3 py-2.5 text-sm text-brand-900 placeholder:text-brand-900/40 focus:border-brand-500;
+    @apply w-full rounded-xl border border-[#EDE4D0] bg-white px-4 py-3 text-sm
+           placeholder:text-[#1A1A1A]/30 focus:border-brand-400 focus:ring-2
+           focus:ring-brand-100 outline-none transition;
   }
-}
 
-/* Respect reduced-motion preference */
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.001ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.001ms !important;
-    scroll-behavior: auto !important;
+  /* ── Section label pill ── */
+  .section-label {
+    @apply inline-flex items-center gap-2 rounded-full border border-brand-200
+           bg-brand-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-widest text-brand-700;
   }
 }

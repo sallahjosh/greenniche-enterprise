@@ -1,49 +1,63 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { Menu, X, ShoppingBag, Leaf } from 'lucide-react'
-import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/utils'
 
-// Only the most important destinations live in the navbar.
-// Blog/News, Gallery and How It Works are in the footer.
 const navLinks = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/about', label: 'About' },
-  { to: '/products', label: 'Products' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/',         label: 'Home',     end: true  },
+  { to: '/about',    label: 'About',    end: false },
+  { to: '/products', label: 'Products', end: false },
+  { to: '/contact',  label: 'Contact',  end: false },
 ]
 
 export function Navbar() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen]         = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const handler = () => setScrolled(window.scrollY > 24)
+    window.addEventListener('scroll', handler, { passive: true })
+    return () => window.removeEventListener('scroll', handler)
+  }, [])
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     cn(
-      'rounded-md px-3 py-2 text-sm font-semibold transition-colors',
-      isActive
-        ? 'text-brand-700 bg-brand-50'
-        : 'text-gray-600 hover:text-brand-700 hover:bg-brand-50'
+      'relative px-1 py-0.5 text-sm font-medium transition-colors',
+      'after:absolute after:bottom-0 after:left-0 after:h-px after:w-full',
+      'after:origin-left after:scale-x-0 after:bg-brand-500 after:transition-transform',
+      'hover:text-brand-700 hover:after:scale-x-100',
+      isActive ? 'text-brand-700 after:scale-x-100' : 'text-[#1A1A1A]/60'
     )
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-100 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80 shadow-sm">
+    <header
+      className={cn(
+        'sticky top-0 z-40 transition-all duration-300',
+        scrolled
+          ? 'bg-white/95 backdrop-blur shadow-soft border-b border-[#EDE4D0]'
+          : 'bg-[#FDFBF7]/80 backdrop-blur border-b border-[#EDE4D0]/60'
+      )}
+    >
       <nav
-        className="container-page flex h-16 items-center justify-between gap-4"
+        className="container-page flex h-[68px] items-center justify-between gap-6"
         aria-label="Main navigation"
       >
-        {/* Logo */}
+        {/* ── Logo ── */}
         <Link
           to="/"
-          className="flex items-center gap-2 font-display text-xl font-extrabold text-brand-700 tracking-tight"
+          className="flex items-center gap-2.5 font-display text-xl font-bold text-[#1A1A1A] tracking-tight"
         >
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-500 text-white shadow-soft">
             <Leaf className="h-4 w-4" />
           </span>
-          GreenNiche
+          <span>
+            Green<span className="text-brand-600">Niche</span>
+          </span>
         </Link>
 
-        {/* Desktop links */}
-        <div className="hidden items-center gap-1 md:flex">
+        {/* ── Desktop links ── */}
+        <div className="hidden items-center gap-7 md:flex">
           {navLinks.map((l) => (
             <NavLink key={l.to} to={l.to} className={linkClass} end={l.end}>
               {l.label}
@@ -51,77 +65,77 @@ export function Navbar() {
           ))}
         </div>
 
-        {/* Desktop actions */}
-        <div className="hidden items-center gap-2 md:flex">
+        {/* ── Desktop actions ── */}
+        <div className="hidden items-center gap-3 md:flex">
           <NavLink
             to="/account"
-            className="text-sm font-semibold text-gray-600 hover:text-brand-700 px-3 py-2 transition-colors"
+            className="text-sm font-medium text-[#1A1A1A]/60 hover:text-brand-700 transition-colors"
           >
             Login
           </NavLink>
           <NavLink
             to="/cart"
-            className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg text-gray-600 hover:bg-brand-50 hover:text-brand-700 transition-colors"
             aria-label="Cart"
+            className="relative flex h-9 w-9 items-center justify-center rounded-full border border-[#EDE4D0] bg-white text-[#1A1A1A]/60 hover:text-brand-700 hover:border-brand-200 shadow-soft transition-all"
           >
-            <ShoppingBag className="h-5 w-5" />
+            <ShoppingBag className="h-4 w-4" />
           </NavLink>
-          <Button size="sm" onClick={() => navigate('/products')}>
+          <button
+            onClick={() => navigate('/products')}
+            className="btn-primary text-xs px-5 py-2.5 shadow-soft"
+          >
             Order Now
-          </Button>
+          </button>
         </div>
 
-        {/* Mobile hamburger */}
+        {/* ── Mobile toggle ── */}
         <button
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-gray-600 hover:bg-brand-50 hover:text-brand-700 transition-colors md:hidden"
+          className="flex h-9 w-9 items-center justify-center rounded-full border border-[#EDE4D0] bg-white text-[#1A1A1A]/60 hover:text-brand-700 transition-colors md:hidden"
           onClick={() => setOpen((v) => !v)}
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
         >
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {open ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
         </button>
       </nav>
 
-      {/* Mobile drawer */}
+      {/* ── Mobile drawer ── */}
       {open && (
-        <div className="md:hidden border-t border-gray-100 bg-white">
-          <div className="container-page flex flex-col gap-1 py-4">
+        <div className="border-t border-[#EDE4D0] bg-white md:hidden">
+          <div className="container-page flex flex-col gap-1 py-5">
             {navLinks.map((l) => (
               <NavLink
                 key={l.to}
                 to={l.to}
-                className={linkClass}
                 end={l.end}
                 onClick={() => setOpen(false)}
+                className={({ isActive }) =>
+                  cn(
+                    'rounded-xl px-4 py-3 text-sm font-medium transition-colors',
+                    isActive
+                      ? 'bg-brand-50 text-brand-700'
+                      : 'text-[#1A1A1A]/70 hover:bg-[#F5F0E8] hover:text-brand-700'
+                  )
+                }
               >
                 {l.label}
               </NavLink>
             ))}
-            <div className="mt-3 flex items-center gap-2 border-t border-gray-100 pt-3">
+            <div className="mt-3 flex gap-2 border-t border-[#EDE4D0] pt-4">
               <NavLink
                 to="/account"
-                className="flex-1 rounded-lg border border-brand-500 px-4 py-2 text-center text-sm font-semibold text-brand-700 hover:bg-brand-50 transition-colors"
                 onClick={() => setOpen(false)}
+                className="flex-1 rounded-full border border-brand-500 py-2.5 text-center text-sm font-semibold text-brand-700 hover:bg-brand-50 transition-colors"
               >
-                Login / My Account
+                Login
               </NavLink>
-              <NavLink
-                to="/cart"
-                className="rounded-lg border border-gray-200 px-4 py-2 text-sm font-semibold text-gray-600 hover:bg-gray-50 transition-colors"
-                onClick={() => setOpen(false)}
+              <button
+                onClick={() => { setOpen(false); navigate('/products') }}
+                className="flex-1 btn-primary text-xs py-2.5"
               >
-                Cart
-              </NavLink>
+                Order Now
+              </button>
             </div>
-            <Button
-              className="mt-2 w-full"
-              onClick={() => {
-                setOpen(false)
-                navigate('/products')
-              }}
-            >
-              Order Now
-            </Button>
           </div>
         </div>
       )}

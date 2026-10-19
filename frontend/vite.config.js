@@ -13,8 +13,9 @@ export default defineConfig({
         port: 5173,
         proxy: {
             // Proxy API calls to the backend during development to avoid CORS friction.
+            // Use 127.0.0.1 (IPv4) to avoid Windows IPv6 `localhost` resolution timeouts.
             '/api': {
-                target: 'http://localhost:4000',
+                target: 'http://127.0.0.1:4000',
                 changeOrigin: true,
             },
         },
