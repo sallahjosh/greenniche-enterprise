@@ -1,7 +1,7 @@
 import { Link, useNavigate } from 'react-router-dom'
 import {
-  ArrowRight, ArrowUpRight, Leaf, Recycle, Sprout,
-  Flame, Droplets, Award, Users, MessageCircle, CheckCircle2,
+  ArrowRight, ArrowUpRight, Leaf,
+  Sprout, Flame, Droplets, MessageCircle,
 } from 'lucide-react'
 import { useProducts } from '@/api/catalog'
 import { brand, coreProducts } from '@/lib/brand'
@@ -221,118 +221,24 @@ export function Home() {
       </section>
 
       {/* ══════════════════════════════════════════
-          5 · STORY  — asymmetric split
+          5 · STORY  — teaser only, link to About
       ══════════════════════════════════════════ */}
-      <section className="container-page py-24">
-        <div className="grid items-center gap-16 lg:grid-cols-[1fr_1.1fr]">
-
-          {/* Images collage */}
-          <div className="relative">
-            <div className="aspect-[4/5] overflow-hidden rounded-4xl shadow-lifted">
-              <img
-                src="/images/gn-image-1.jpg"
-                alt="GreenNiche operations"
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-            {/* small inset photo */}
-            <div className="absolute -bottom-6 -right-4 w-40 overflow-hidden rounded-3xl border-4 border-[#FDFBF7] shadow-card sm:-right-8 sm:w-52">
-              <img
-                src="/images/gn-image-4.jpg"
-                alt="Processing cassava"
-                className="h-36 w-full object-cover sm:h-44"
-                loading="lazy"
-              />
-            </div>
-            {/* award badge */}
-            <div className="absolute -top-4 left-4 flex items-center gap-3 rounded-2xl border border-[#EDE4D0] bg-white px-4 py-3 shadow-card sm:left-8">
-              <Award className="h-7 w-7 text-brand-500 shrink-0" />
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-wider text-brand-700">Award 2025</p>
-                <p className="text-xs text-ink/60">Most Financially Sound</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Text */}
-          <div className="flex flex-col">
-            <span className="section-label w-fit">Our story</span>
-            <h2 className="mt-5 font-display text-4xl font-black leading-tight tracking-tightest text-ink md:text-5xl">
-              From spoilage<br />
-              <span className="text-brand-600">to value.</span>
-            </h2>
-            <p className="mt-5 text-base leading-relaxed text-ink/60">
-              Our founder, <span className="font-semibold text-ink">{brand.founder}</span>, watched
-              fresh cassava spoil before reaching markets — a loss for farmers and communities.
-            </p>
-            <p className="mt-3 text-base leading-relaxed text-ink/60">
-              GreenNiche was built to solve that. By processing cassava into long-lasting Gari and
-              converting every by-product into a useful good, we eliminate waste while generating
-              real economic value across the Central Region.
-            </p>
-
-            <ul className="mt-7 grid grid-cols-2 gap-3">
-              {[
-                'Zero post-harvest waste',
-                'Supporting local farmers',
-                'Youth-led innovation',
-                'Award-winning model',
-                'Climate-smart process',
-                'Community-centred',
-              ].map((item) => (
-                <li key={item} className="flex items-center gap-2 text-sm font-medium text-ink/70">
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-brand-500" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <Link
-              to="/about"
-              className="mt-8 inline-flex w-fit items-center gap-2 rounded-full bg-ink px-6 py-3 text-sm font-bold text-white hover:bg-brand-900 transition-colors shadow-card"
-            >
-              Read our full story <ArrowRight className="h-4 w-4" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          6 · WHY GREENNICHE  — cream bg, 3-col
-      ══════════════════════════════════════════ */}
-      <section className="bg-[#F5F0E8] py-24">
-        <div className="container-page">
-          <div className="text-center">
-            <span className="section-label">Why choose us</span>
-            <h2 className="mt-5 font-display text-4xl font-black tracking-tightest text-ink md:text-5xl">
-              Why <span className="text-brand-600">GreenNiche</span>
-            </h2>
-          </div>
-
-          <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { icon: <Recycle className="h-5 w-5" />, title: 'Zero-waste production',    text: 'Every part of the cassava plant becomes a product. Nothing is discarded.' },
-              { icon: <Sprout className="h-5 w-5" />,  title: 'Climate-smart farming',   text: 'Our circular model slashes post-harvest loss and agricultural waste.' },
-              { icon: <Users className="h-5 w-5" />,   title: 'Smallholder farmers',     text: 'Dependable demand for locally grown cassava, empowering rural communities.' },
-              { icon: <Leaf className="h-5 w-5" />,    title: 'Youth-led innovation',    text: 'A young Ghanaian founder reimagining what agribusiness can be.' },
-              { icon: <Award className="h-5 w-5" />,   title: 'Award-winning',           text: 'Most Financially Sound Business, Compassion Business Challenge 2025.' },
-              { icon: <Droplets className="h-5 w-5" />, title: 'Community value',        text: 'Products that serve households, vendors, livestock farmers and schools.' },
-            ].map((f) => (
-              <div
-                key={f.title}
-                className="group flex flex-col gap-4 rounded-3xl bg-white p-7 shadow-soft hover:shadow-card transition-all hover:-translate-y-0.5"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-brand-50 text-brand-600 group-hover:bg-brand-500 group-hover:text-white transition-colors">
-                  {f.icon}
-                </div>
-                <div>
-                  <h3 className="font-display text-lg font-bold text-ink">{f.title}</h3>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink/55">{f.text}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+      <section className="container-page py-20">
+        <div className="flex flex-col items-center gap-6 text-center">
+          <span className="section-label">Our story</span>
+          <h2 className="font-display text-4xl font-black tracking-tightest text-ink md:text-5xl">
+            From spoilage <span className="text-brand-600">to value.</span>
+          </h2>
+          <p className="max-w-xl text-base leading-relaxed text-ink/60">
+            Our founder watched fresh cassava spoil before reaching markets. GreenNiche was built
+            to fix that — and every by-product in the process became another product.
+          </p>
+          <Link
+            to="/about"
+            className="inline-flex items-center gap-2 rounded-full bg-[#1A1A1A] px-6 py-3 text-sm font-bold text-white hover:bg-brand-900 transition-colors shadow-card"
+          >
+            Read our full story <ArrowRight className="h-4 w-4" />
+          </Link>
         </div>
       </section>
 
