@@ -18,10 +18,10 @@ export function Home() {
           1 · HERO  — full-bleed split
       ══════════════════════════════════════════ */}
       <section className="relative overflow-hidden bg-[#FDFBF7]">
-        <div className="container-page grid min-h-[92vh] grid-cols-1 items-center gap-0 lg:grid-cols-2">
+        <div className="container-page grid grid-cols-1 items-center gap-12 py-16 lg:grid-cols-2 lg:gap-16 lg:py-24">
 
           {/* Left — text */}
-          <div className="relative z-10 flex flex-col justify-center pb-16 pt-16 lg:pr-12 lg:py-24">
+          <div className="relative z-10 flex flex-col justify-center">
 
             {/* Pill label */}
             <span className="section-label w-fit">
@@ -30,7 +30,7 @@ export function Home() {
             </span>
 
             {/* Big editorial headline */}
-            <h1 className="mt-6 font-display text-5xl font-black leading-[1.05] tracking-tightest text-ink md:text-6xl lg:text-[5.5rem]">
+            <h1 className="mt-6 font-display text-5xl font-black leading-[1.05] tracking-tightest text-ink md:text-6xl lg:text-[5rem]">
               One crop.<br />
               <em className="not-italic text-brand-600">Every part</em><br />
               used.
@@ -65,39 +65,34 @@ export function Home() {
             </p>
           </div>
 
-          {/* Right — hero image */}
-          <div className="relative hidden h-full min-h-[92vh] lg:block">
-            {/* full-height bleed image */}
-            <img
-              src="/images/de-gari.jpg"
-              alt="Premium GreenNiche Gari"
-              className="absolute inset-0 h-full w-full object-cover"
-              loading="eager"
-            />
-            {/* dark gradient on left edge so text stays readable */}
+          {/* Right — hero image: contained, framed, proportional */}
+          <div className="relative flex items-center justify-center">
+            {/* Decorative background blob */}
             <div
               aria-hidden
-              className="absolute inset-0 bg-gradient-to-r from-[#FDFBF7] via-transparent to-transparent"
-              style={{ width: '35%' }}
+              className="absolute inset-6 rounded-[2.5rem] bg-brand-50 -z-10"
             />
-            {/* floating info card */}
-            <div className="absolute bottom-10 right-8 max-w-[200px] rounded-2xl bg-white/90 p-4 shadow-lifted backdrop-blur">
-              <p className="text-xs font-bold uppercase tracking-widest text-brand-700">Flagship product</p>
-              <p className="mt-1 font-display text-2xl font-bold text-ink">Gari</p>
-              <p className="mt-0.5 text-xs text-ink/50">From {brand.location}</p>
+            {/* Image frame */}
+            <div className="relative w-full max-w-[480px] overflow-hidden rounded-[2rem] shadow-lifted ring-1 ring-black/5">
+              <img
+                src="/images/de-gari.jpg"
+                alt="Premium GreenNiche Gari"
+                className="h-[420px] w-full object-cover object-center sm:h-[460px]"
+                loading="eager"
+              />
+              {/* Floating info card */}
+              <div className="absolute bottom-4 left-4 right-4 rounded-xl bg-white/90 px-4 py-3 shadow-card backdrop-blur">
+                <p className="text-[11px] font-bold uppercase tracking-widest text-brand-700">Flagship product</p>
+                <div className="mt-0.5 flex items-baseline justify-between">
+                  <p className="font-display text-xl font-bold text-ink">Premium Gari</p>
+                  <p className="text-xs font-semibold text-brand-600">GH₵60 / pack</p>
+                </div>
+                <p className="text-xs text-ink/50">{brand.location}</p>
+              </div>
             </div>
           </div>
 
-          {/* Mobile hero image (below text) */}
-          <div className="relative -mx-5 h-64 sm:h-80 lg:hidden">
-            <img
-              src="/images/de-gari.jpg"
-              alt="Premium GreenNiche Gari"
-              className="h-full w-full object-cover"
-              loading="eager"
-            />
-            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-[#FDFBF7]/60 to-transparent" />
-          </div>
+          {/* Mobile hero image — hidden on lg+ (shown above inside grid) */}
         </div>
       </section>
 
