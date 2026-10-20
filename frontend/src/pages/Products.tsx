@@ -1,129 +1,180 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
-import { PackageX } from 'lucide-react'
-import { Spinner } from '@/components/ui/Spinner'
-import { Badge } from '@/components/ui/Badge'
-import { Button } from '@/components/ui/Button'
+import { ArrowUpRight, PackageX, MessageCircle } from 'lucide-react'
 import { useProducts } from '@/api/catalog'
-import { coreProducts } from '@/lib/brand'
+import { coreProducts, brand } from '@/lib/brand'
 import { formatGHS, whatsappLink } from '@/lib/utils'
-import { brand } from '@/lib/brand'
 import type { Product } from '@/types'
 
 export function Products() {
   const { data: products, isLoading, isError } = useProducts()
-  const list = products ?? []
+  const list: Product[] = products ?? []
 
   return (
-    <>
-      <section className="border-b border-brand-100 bg-brand-50/40">
-        <div className="container-page py-12 md:py-16">
-          <h1 className="text-3xl font-extrabold md:text-4xl">Our products</h1>
-          <p className="mt-3 max-w-2xl text-lg text-brand-900/80">
-            Four products from one crop — Gari, animal feed, charcoal and starch. Nothing wasted.
+    <div className="bg-canvas">
+
+      {/* ── HEADER ── */}
+      <section className="border-b border-stone-200 bg-parchment">
+        <div className="wrap py-12 md:py-16">
+          <span className="tag">Products</span>
+          <h1 className="mt-4 section-heading text-4xl md:text-5xl">
+            Our products
+          </h1>
+          <p className="mt-3 max-w-xl prose-body text-base">
+            Four products from one cassava crop — Gari, animal feed, charcoal and starch.
+            Nothing wasted.
           </p>
         </div>
       </section>
 
-      <section className="container-page py-14">
+      {/* ── GRID ── */}
+      <section className="wrap py-14">
         {isLoading ? (
-          <Spinner className="py-20" />
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="h-72 animate-pulse rounded-3xl bg-stone-200" />
+            ))}
+          </div>
         ) : isError ? (
           <EmptyState
             title="Catalogue temporarily unavailable"
-            message="The live product catalogue will appear here once the backend is running. You can still reach us on WhatsApp."
-            action={
+            message="The live catalogue will appear here once the backend is running. You can still reach us on WhatsApp."
+            cta={
               <a
                 href={whatsappLink(brand.phone, 'Hello GreenNiche, I would like to enquire about your products.')}
-                target="_blank"
-                rel="noreferrer"
-                className="btn-primary px-5 py-2.5"
+                target="_blank" rel="noreferrer"
+                className="btn-primary text-sm"
               >
-                Enquire on WhatsApp
+                <MessageCircle className="h-4 w-4" /> Enquire on WhatsApp
               </a>
             }
           />
-        ) : list.length === 0 ? (
-          <EmptyState
-            title="No products yet"
-            message="Products will appear here once they are published by the administrator."
-          />
+        ) : list.length > 0 ? (
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {list.map(p => <LiveProductCard key={p.id} product={p} />)}
+          </div>
         ) : (
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {list.map((p) => (
-              <ProductCard key={p.id} product={p} />
+          /* Backend not running — show static core products */
+          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+            {coreProducts.map(p => (
+              <StaticProductCard
+                key={p.slug}
+                slug={p.slug}
+                name={p.name}
+                summary={p.summary}
+                image={p.image}
+              />
             ))}
           </div>
         )}
-
-        {/* Static reference of the four core products (always visible for context) */}
-        {list.length === 0 && !isLoading && !isError && (
-          <div className="mt-10">
-            <h2 className="text-lg font-semibold text-brand-900">Our four core products</h2>
-            <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {coreProducts.map((p) => (
-                <div key={p.slug} className="card overflow-hidden">
-                  <img src={p.image} alt={p.name} className="h-40 w-full object-cover" loading="lazy" />
-                  <div className="p-4">
-                    <h3 className="font-semibold">{p.name}</h3>
-                    <p className="mt-1 text-sm text-brand-900/70">{p.summary}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </section>
-    </>
+
+      {/* ── BULK ORDERS CTA ── */}
+      <section className="bg-parchment border-t border-stone-200">
+        <div className="wrap py-12 flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div>
+            <h2 className="section-heading text-2xl">Need a bulk order?</h2>
+            <p className="mt-1 text-sm prose-body">
+              Schools, institutions and vendors — reach us directly on WhatsApp.
+            </p>
+          </div>
+          <a
+            href={whatsappLink(brand.phone, 'Hello GreenNiche, I would like to place a bulk order.')}
+            target="_blank" rel="noreferrer"
+            className="btn-primary shrink-0"
+          >
+            <MessageCircle className="h-4 w-4" /> Order on WhatsApp
+          </a>
+        </div>
+      </section>
+    </div>
   )
 }
 
-function ProductCard({ product }: { product: Product }) {
+/* ── Static card (backend offline) ── */
+function StaticProductCard({ slug, name, summary, image }: {
+  slug: string; name: string; summary: string; image: string
+}) {
+  return (
+    <Link to={`/products/${slug}`}
+      className="group flex flex-col overflow-hidden rounded-3xl bg-white border border-stone-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all">
+      <div className="overflow-hidden">
+        <img src={image} alt={name}
+          className="h-48 w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy" />
+      </div>
+      <div className="flex flex-1 flex-col p-5">
+        <h3 className="font-display text-lg font-bold text-ink">{name}</h3>
+        <p className="mt-1.5 text-sm text-ink-light line-clamp-2 flex-1">{summary}</p>
+        <div className="mt-4 flex items-center justify-between border-t border-stone-100 pt-4">
+          <span className="text-sm font-bold text-ink-muted">Price on request</span>
+          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-stone-100 text-ink-muted group-hover:bg-brand-500 group-hover:text-white transition-colors">
+            <ArrowUpRight className="h-3.5 w-3.5" />
+          </span>
+        </div>
+      </div>
+    </Link>
+  )
+}
+
+/* ── Live card (backend online) ── */
+function LiveProductCard({ product }: { product: Product }) {
   const available = (product.inventory?.onHand ?? 0) - (product.inventory?.reserved ?? 0) > 0
-  const priceLabel = product.priceVisible && product.basePrice != null ? formatGHS(Number(product.basePrice)) : 'Price on request'
+  const priceLabel = product.priceVisible && product.basePrice != null
+    ? formatGHS(Number(product.basePrice))
+    : 'Price on request'
   const image = product.images?.[0]?.url ?? '/images/gn-image-2.jpg'
 
   return (
-    <div className="card overflow-hidden">
-      <Link to={`/products/${product.slug}`}>
-        <img src={image} alt={product.images?.[0]?.altText ?? product.name} className="h-48 w-full object-cover" loading="lazy" />
+    <div className="flex flex-col overflow-hidden rounded-3xl bg-white border border-stone-200 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all">
+      <Link to={`/products/${product.slug}`} className="overflow-hidden">
+        <img src={image} alt={product.name}
+          className="h-48 w-full object-cover transition-transform duration-500 hover:scale-105"
+          loading="lazy" />
       </Link>
-      <div className="p-5">
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="font-semibold">{product.name}</h3>
-          <Badge tone={available ? 'green' : 'amber'}>{available ? 'Available' : 'Limited'}</Badge>
+      <div className="flex flex-1 flex-col p-5">
+        <div className="flex items-start justify-between gap-2">
+          <h3 className="font-display text-lg font-bold text-ink">{product.name}</h3>
+          <span className={`shrink-0 rounded-full px-2.5 py-1 text-2xs font-semibold ${
+            available ? 'bg-brand-50 text-brand-700' : 'bg-amber-50 text-amber-700'
+          }`}>
+            {available ? 'In stock' : 'Limited'}
+          </span>
         </div>
-        <p className="mt-1 text-sm text-brand-900/70">{product.summary}</p>
-        <p className="mt-3 font-semibold text-brand-700">{priceLabel}</p>
-        <div className="mt-4 flex gap-2">
-          <Link to={`/products/${product.slug}`} className="btn-outline px-4 py-2 text-sm">
-            View details
-          </Link>
-          {product.canOrderOnline ? (
-            <Button size="sm" className="flex-1">Add to cart</Button>
-          ) : (
-            <a
-              href={whatsappLink(brand.phone, `Hello GreenNiche, I would like a quote for ${product.name}.`)}
-              target="_blank"
-              rel="noreferrer"
-              className="btn-secondary flex-1 px-4 py-2 text-sm"
-            >
-              Request a quote
-            </a>
-          )}
+        <p className="mt-1.5 text-sm text-ink-light line-clamp-2 flex-1">{product.summary}</p>
+        <div className="mt-4 border-t border-stone-100 pt-4 space-y-2.5">
+          <p className="text-sm font-bold text-brand-700">{priceLabel}</p>
+          <div className="flex gap-2">
+            <Link to={`/products/${product.slug}`}
+              className="flex-1 rounded-full border border-stone-200 py-2 text-center text-xs font-semibold text-ink/70 hover:border-brand-400 hover:text-brand-700 transition-colors">
+              View details
+            </Link>
+            {product.canOrderOnline ? (
+              <button className="flex-1 rounded-full bg-brand-500 py-2 text-xs font-semibold text-white hover:bg-brand-600 transition-colors">
+                Add to cart
+              </button>
+            ) : (
+              <a
+                href={whatsappLink(brand.phone, `Hello GreenNiche, I would like a quote for ${product.name}.`)}
+                target="_blank" rel="noreferrer"
+                className="flex-1 rounded-full bg-stone-100 py-2 text-center text-xs font-semibold text-ink/70 hover:bg-brand-50 hover:text-brand-700 transition-colors">
+                Get a quote
+              </a>
+            )}
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
-function EmptyState({ title, message, action }: { title: string; message: string; action?: React.ReactNode }) {
+/* ── Empty / error state ── */
+function EmptyState({ title, message, cta }: { title: string; message: string; cta?: React.ReactNode }) {
   return (
-    <div className="card flex flex-col items-center justify-center p-12 text-center">
-      <PackageX className="h-10 w-10 text-brand-300" aria-hidden="true" />
-      <h2 className="mt-3 text-lg font-semibold text-brand-900">{title}</h2>
-      <p className="mt-1 max-w-md text-sm text-brand-900/70">{message}</p>
-      {action && <div className="mt-4">{action}</div>}
+    <div className="flex flex-col items-center justify-center rounded-3xl border border-stone-200 bg-white p-16 text-center">
+      <PackageX className="h-10 w-10 text-stone-300" />
+      <h2 className="mt-4 font-display text-xl font-bold text-ink">{title}</h2>
+      <p className="mt-2 max-w-sm text-sm text-ink-light">{message}</p>
+      {cta && <div className="mt-6">{cta}</div>}
     </div>
   )
 }
