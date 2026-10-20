@@ -17,90 +17,105 @@ export function Home() {
   return (
     <div>
 
-      {/* ── 1. HERO ────────────────────────────────────── */}
-      <section className="relative min-h-screen bg-brand-900 overflow-hidden">
+      {/* ── 1. HERO  — clean split: text left, de-gari right ── */}
+      <section className="relative bg-brand-900 overflow-hidden">
+        {/* Left green blob */}
+        <div aria-hidden className="absolute -left-40 top-0 h-full w-96 bg-brand-800/40 blur-3xl pointer-events-none" />
+        <div aria-hidden className="absolute inset-0 bg-noise opacity-20 pointer-events-none" />
 
-        {/* Full-bleed background image */}
-        <img
-          src="/images/de-gari.jpg"
-          alt=""
-          aria-hidden
-          className="absolute inset-0 h-full w-full object-cover object-center"
-          loading="eager"
-        />
+        <div className="wrap relative z-10 grid min-h-[92vh] grid-cols-1 items-center gap-0 lg:grid-cols-2">
 
-        {/* Rich overlay — dark at bottom for text legibility */}
-        <div
-          aria-hidden
-          className="absolute inset-0"
-          style={{
-            background:
-              'linear-gradient(180deg, rgba(10,44,27,0.72) 0%, rgba(10,44,27,0.55) 40%, rgba(10,44,27,0.88) 85%, rgba(10,44,27,0.97) 100%)',
-          }}
-        />
-
-        {/* Noise texture */}
-        <div aria-hidden className="absolute inset-0 bg-noise opacity-40 pointer-events-none" />
-
-        {/* Content */}
-        <div className="relative z-10 wrap flex flex-col justify-end min-h-screen pb-16 pt-32 lg:pb-24">
-
-          {/* Top pill */}
-          <div className="mb-8">
-            <span className="tag-dark">
+          {/* ── Left: text ── */}
+          <div className="flex flex-col justify-center py-20 lg:py-28 lg:pr-12">
+            <span className="tag-dark w-fit">
               <Leaf className="h-3 w-3" />
-              Zero-Waste Agribusiness · Central Region, Ghana
+              Zero-Waste Agribusiness · Ghana
             </span>
-          </div>
 
-          {/* Headline */}
-          <h1 className="font-display font-black text-white tracking-tightest max-w-3xl"
-            style={{ fontSize: 'clamp(2.5rem, 7vw, 6rem)', lineHeight: 1.02 }}>
-            Turning Every<br />
-            Harvest Into<br />
-            <span style={{ WebkitTextStroke: '2px #3FA970', color: 'transparent' }}>
-              Lasting Value.
-            </span>
-          </h1>
+            <h1
+              className="mt-6 font-display font-black text-white tracking-tightest"
+              style={{ fontSize: 'clamp(2.8rem, 6vw, 5.5rem)', lineHeight: 1.04 }}
+            >
+              Turning Every<br />
+              Harvest Into<br />
+              <span className="text-brand-400">Lasting Value.</span>
+            </h1>
 
-          {/* Subtext + CTAs in a two-column layout at large screens */}
-          <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-            <div className="max-w-xl">
-              <p className="text-lg leading-relaxed text-white/70">
-                From premium Gari to animal feed, charcoal and starch — GreenNiche transforms
-                fresh cassava through a zero-waste circular process that creates value for
-                farmers, households and communities.
-              </p>
-              <div className="mt-7 flex flex-wrap gap-3">
-                <button onClick={() => navigate('/products')} className="btn-primary">
-                  Explore our products <ArrowRight className="h-4 w-4" />
-                </button>
-                <Link to="/how-it-works" className="btn-outline-white">
-                  Discover our process
-                </Link>
-              </div>
+            <p className="mt-6 max-w-lg text-base leading-relaxed text-white/65 md:text-lg">
+              From premium Gari to animal feed, charcoal and starch — GreenNiche transforms
+              fresh cassava through a zero-waste circular process that creates real value
+              for farmers, households and communities.
+            </p>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <button onClick={() => navigate('/products')} className="btn-primary">
+                Explore products <ArrowRight className="h-4 w-4" />
+              </button>
+              <Link to="/how-it-works" className="btn-outline-white">
+                Discover our process
+              </Link>
             </div>
 
-            {/* Floating stats */}
-            <div className="flex gap-px overflow-hidden rounded-2xl border border-white/10 shrink-0">
+            {/* Stats row */}
+            <div className="mt-12 flex gap-8 border-t border-white/10 pt-8">
               {[
-                { n: '4', label: 'Products' },
-                { n: '0', label: 'Waste'    },
-                { n: '2', label: 'Awards'   },
+                { n: '4', label: 'Products from one crop' },
+                { n: '0', label: 'Waste in our process'   },
+                { n: '2', label: 'Business awards'        },
               ].map(s => (
-                <div key={s.label} className="bg-white/8 backdrop-blur px-6 py-4 text-center">
+                <div key={s.label}>
                   <p className="font-display text-3xl font-black text-white">{s.n}</p>
-                  <p className="mt-0.5 text-2xs font-semibold uppercase tracking-widest text-white/50">{s.label}</p>
+                  <p className="mt-0.5 text-xs text-white/45 leading-tight max-w-[80px]">{s.label}</p>
                 </div>
               ))}
             </div>
           </div>
-        </div>
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 opacity-40">
-          <span className="text-2xs uppercase tracking-[0.2em] text-white">Scroll</span>
-          <div className="h-8 w-px bg-white" />
+          {/* ── Right: de-gari image in a styled frame ── */}
+          <div className="hidden lg:flex items-center justify-center py-16">
+            <div className="relative w-full max-w-[480px]">
+              {/* Glow ring behind image */}
+              <div aria-hidden className="absolute inset-0 rounded-[2.5rem] bg-brand-500/20 blur-2xl scale-95" />
+              {/* Main image frame */}
+              <div className="relative overflow-hidden rounded-[2rem] shadow-xl ring-1 ring-white/10">
+                <img
+                  src="/images/de-gari.jpg"
+                  alt="Premium GreenNiche Gari"
+                  className="h-[520px] w-full object-cover object-center"
+                  loading="eager"
+                />
+                {/* Bottom caption card */}
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-brand-900/90 to-transparent px-6 pb-6 pt-12">
+                  <p className="text-2xs font-bold uppercase tracking-widest text-brand-300">Flagship product</p>
+                  <div className="mt-1 flex items-baseline justify-between">
+                    <p className="font-display text-2xl font-bold text-white">Premium Gari</p>
+                    <p className="text-sm font-bold text-brand-400">GH₵60 / pack</p>
+                  </div>
+                </div>
+              </div>
+              {/* Small floating badge */}
+              <div className="absolute -top-3 -right-4 flex items-center gap-2 rounded-2xl bg-white px-4 py-2.5 shadow-lg">
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-brand-50">
+                  <Leaf className="h-3.5 w-3.5 text-brand-600" />
+                </span>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-brand-700">Zero Waste</p>
+                  <p className="text-xs text-ink-muted">One crop · 4 products</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Mobile image */}
+          <div className="relative -mx-5 h-64 sm:h-72 lg:hidden">
+            <img
+              src="/images/de-gari.jpg"
+              alt="Premium GreenNiche Gari"
+              className="h-full w-full object-cover"
+              loading="eager"
+            />
+            <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-brand-900/80 to-transparent" />
+          </div>
         </div>
       </section>
 
@@ -118,69 +133,7 @@ export function Home() {
         </div>
       </div>
 
-      {/* ── 3. BRAND INTRO ─────────────────────────────── */}
-      <section className="bg-canvas py-24 lg:py-32">
-        <div className="wrap grid items-center gap-16 lg:grid-cols-[1fr_1.1fr] lg:gap-24">
-
-          {/* Text */}
-          <div>
-            <span className="tag">Our mission</span>
-            <h2 className="mt-5 section-heading text-4xl md:text-5xl">
-              We are not just<br />
-              processing Gari.<br />
-              <em className="not-italic text-brand-600">We are processing<br />the future.</em>
-            </h2>
-            <div className="mt-6 space-y-4 prose-body">
-              <p>
-                GreenNiche Enterprise was founded after our founder,{' '}
-                <strong className="text-ink font-semibold">{brand.founder}</strong>, saw
-                how much fresh cassava spoiled before reaching markets — a waste of farmers'
-                effort and families' income.
-              </p>
-              <p>
-                Today we process cassava into premium Gari and ensure that every
-                by-product — peels, liquid, starch — becomes something useful.
-                One crop, fully used, zero waste.
-              </p>
-            </div>
-            <div className="mt-8 flex flex-wrap gap-4">
-              <Link to="/about" className="btn-dark">
-                Our story <ArrowRight className="h-4 w-4" />
-              </Link>
-              <Link to="/how-it-works" className="btn-outline">
-                How it works
-              </Link>
-            </div>
-          </div>
-
-          {/* Image with floating accent */}
-          <div className="relative">
-            <div className="overflow-hidden rounded-4xl shadow-xl aspect-[4/5]">
-              <img
-                src="/images/gn-image-1.jpg"
-                alt="GreenNiche operations"
-                className="h-full w-full object-cover"
-                loading="lazy"
-              />
-            </div>
-            <div className="absolute -bottom-6 -left-6 rounded-3xl border-4 border-canvas overflow-hidden shadow-lg w-36 sm:w-44">
-              <img
-                src="/images/gn-image-4.jpg"
-                alt="Cassava processing"
-                className="h-32 w-full object-cover sm:h-40"
-                loading="lazy"
-              />
-            </div>
-            <div className="absolute top-6 -right-4 max-w-[200px] rounded-2xl bg-white shadow-lg p-4 sm:-right-8">
-              <p className="text-2xs font-bold uppercase tracking-wider text-brand-600">Circular process</p>
-              <p className="mt-1 font-display text-2xl font-bold text-ink">Zero<br/>Waste.</p>
-              <p className="mt-1 text-xs text-ink-muted">One crop → four products</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── 4. PRODUCTS ────────────────────────────────── */}
+      {/* ── 3. PRODUCTS ────────────────────────────────── */}
       <section className="bg-parchment py-24 lg:py-32">
         <div className="wrap">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between mb-14">
